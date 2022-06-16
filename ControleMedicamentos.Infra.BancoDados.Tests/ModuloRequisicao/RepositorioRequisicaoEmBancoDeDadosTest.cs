@@ -8,6 +8,7 @@ using ControleMedicamentos.Infra.BancoDados.ModuloFornecedor;
 using ControleMedicamentos.Infra.BancoDados.ModuloFuncionario;
 using ControleMedicamentos.Infra.BancoDados.ModuloPaciente;
 using ControleMedicamentos.Infra.BancoDados.ModuloRequisicao;
+using GeradorClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,8 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloRequisicao
     [TestClass]
     public class RepositorioRequisicaoEmBancoDeDadosTest
     {
-
+        RepositorioRequisicaoEmBancoDeDados repositorioRequisicao = new RepositorioRequisicaoEmBancoDeDados();
+        GeradorDeClasses gerador;
         private string sql = @"
                                 DELETE FROM [TBRequisicao]
                                      DBCC CHECKIDENT (TBRequisicao, RESEED, 0)
@@ -52,55 +54,16 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloRequisicao
 
             conexaoComBanco.Close();
 
+            gerador= new GeradorDeClasses();
+
+
         }
         [TestMethod]
         public void Deve_Inserir_Requisicao()
         {
-            var requisicao = new Requisicao();
-
-            var repositorioRequisicao = new RepositorioRequisicaoEmBancoDeDados();
-
-            var medicamento = new Medicamento("Amonixilina","Dor","1313131", DateTime.Today);
-            var repositorioMedicamento = new RepositorioMedicamentoEmBancoDados();
-            
-
-            Fornecedor fornecedor = new Fornecedor("AAA", "2424242", "AAA@GMAIL.COM", "LAGES", "SC");
-            var repositorioFornecedor = new RepositorioFornecedorEmBancoDeDados();
-            repositorioFornecedor.Inserir(fornecedor);
-
-            repositorioMedicamento.Inserir(medicamento, fornecedor);
-
-            var medicamentoNumero =repositorioMedicamento.SelecionarMedicamentoNumero(medicamento.Id);
-
-
-            var funcionario = new Funcionario();
-            funcionario.Nome = "Edenilson";
-            funcionario.Senha = "aaa1313";
-            funcionario.Login = "aaaaaaaaa";
-            var repositorioFuncionario = new RepositorioFuncionarioEmBancoDeDados();           
-
-            repositorioFuncionario.Inserir(funcionario);
-
-            var funcionarioNumero = repositorioFuncionario.SelecionarFuncionarioPorNumero(funcionario.Id);
-
-            var paciente = new Paciente("Carlos","aadawdadadad");
-            var repositorioPaciente = new RepositorioPacienteEmBancoDeDados();
-
-            repositorioPaciente.Inserir(paciente);
-
-            var pacienteNumero= repositorioPaciente.SelecionarPacienteNumero(paciente.Id);
-
-            requisicao.Paciente = pacienteNumero;
-            requisicao.Medicamento = medicamentoNumero;
-            requisicao.Funcionario = funcionarioNumero;
-            requisicao.Data = DateTime.Today;
-            requisicao.QtdMedicamento = 2;
-
-            repositorioRequisicao.Inserir( requisicao);
-
-            requisicao.Paciente= pacienteNumero;
-
-            var requisicaoNova = repositorioRequisicao.SelecionarRequisicaoNumero(requisicao.Id);
+           Requisicao requisicao=  gerador.GerandoRequisicao();
+           
+           var requisicaoNova =repositorioRequisicao.SelecionarRequisicaoNumero(requisicao.Id);
 
             Assert.AreEqual(requisicaoNova.Id, requisicao.Id);
             Assert.AreEqual(requisicaoNova.Paciente.Nome, requisicao.Paciente.Nome);
@@ -109,188 +72,48 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloRequisicao
         [TestMethod]
         public void Deve_Editar_Requisicao()
         {
-            var requisicao = new Requisicao();
-
-            var repositorioRequisicao = new RepositorioRequisicaoEmBancoDeDados();
-
-            var medicamento = new Medicamento("Amonixilina", "Dor", "1313131", DateTime.Today);
-            var repositorioMedicamento = new RepositorioMedicamentoEmBancoDados();
-
-
-            Fornecedor fornecedor = new Fornecedor("AAA", "2424242", "AAA@GMAIL.COM", "LAGES", "SC");
-            var repositorioFornecedor = new RepositorioFornecedorEmBancoDeDados();
-            repositorioFornecedor.Inserir(fornecedor);
-
-            repositorioMedicamento.Inserir(medicamento, fornecedor);
-
-            var medicamentoNumero = repositorioMedicamento.SelecionarMedicamentoNumero(medicamento.Id);
-
-
-            var funcionario = new Funcionario();
-            funcionario.Nome = "Edenilson";
-            funcionario.Senha = "aaa1313";
-            funcionario.Login = "aaaaaaaaa";
-            var repositorioFuncionario = new RepositorioFuncionarioEmBancoDeDados();
-
-            repositorioFuncionario.Inserir(funcionario);
-
-            var funcionarioNumero = repositorioFuncionario.SelecionarFuncionarioPorNumero(funcionario.Id);
-
-            var paciente = new Paciente("Carlos", "aadawdadadad");
-            var repositorioPaciente = new RepositorioPacienteEmBancoDeDados();
-
-            repositorioPaciente.Inserir(paciente);
-
-            var pacienteNumero = repositorioPaciente.SelecionarPacienteNumero(paciente.Id);
-
-            requisicao.Paciente=pacienteNumero;
-            requisicao.Medicamento=medicamentoNumero;
-            requisicao.Funcionario = funcionarioNumero;
-            requisicao.Data = DateTime.Today;
-            requisicao.QtdMedicamento = 2;
-
-            repositorioRequisicao.Inserir(requisicao);
+            Requisicao requisicao = gerador.GerandoRequisicao();            
 
             var requisicaoNova = repositorioRequisicao.SelecionarRequisicaoNumero(requisicao.Id);
 
-            var pacienteDois = new Paciente("Carlos", "555555555");
-            repositorioPaciente.Inserir(pacienteDois);
-            var pacienteNumeroDois = repositorioPaciente.SelecionarPacienteNumero(paciente.Id);
+            Paciente paciente = gerador.GerandoPaciente();
 
-            requisicaoNova.QtdMedicamento = 20; 
-            requisicaoNova.Paciente = pacienteDois;
+            requisicaoNova.Paciente = paciente;
 
             repositorioRequisicao.Editar(requisicaoNova);
 
-           var requisicaoEditada = repositorioRequisicao.SelecionarRequisicaoNumero(requisicaoNova.Id);
+            var requisicaoEditada = repositorioRequisicao.SelecionarRequisicaoNumero(requisicaoNova.Id);
 
-            Assert.AreEqual(requisicaoEditada.QtdMedicamento,requisicaoNova.QtdMedicamento);
-            Assert.AreEqual(requisicaoEditada.Paciente.CartaoSUS,requisicaoNova.Paciente.CartaoSUS);
+            Assert.AreEqual(requisicaoEditada.Paciente.Nome, requisicaoNova.Paciente.Nome);
+
         }
         [TestMethod]
         public void Deve_Excluir()
         {
-            var requisicao = new Requisicao();
-
-            var repositorioRequisicao = new RepositorioRequisicaoEmBancoDeDados();
-
-            var medicamento = new Medicamento("Amonixilina", "Dor", "1313131", DateTime.Today);
-            var repositorioMedicamento = new RepositorioMedicamentoEmBancoDados();
-
-
-            Fornecedor fornecedor = new Fornecedor("AAA", "2424242", "AAA@GMAIL.COM", "LAGES", "SC");
-            var repositorioFornecedor = new RepositorioFornecedorEmBancoDeDados();
-            repositorioFornecedor.Inserir(fornecedor);
-
-            repositorioMedicamento.Inserir(medicamento, fornecedor);
-
-            var medicamentoNumero = repositorioMedicamento.SelecionarMedicamentoNumero(medicamento.Id);
-
-
-            var funcionario = new Funcionario();
-            funcionario.Nome = "Edenilson";
-            funcionario.Senha = "aaa1313";
-            funcionario.Login = "aaaaaaaaa";
-            var repositorioFuncionario = new RepositorioFuncionarioEmBancoDeDados();
-
-            repositorioFuncionario.Inserir(funcionario);
-
-            var funcionarioNumero = repositorioFuncionario.SelecionarFuncionarioPorNumero(funcionario.Id);
-
-            var paciente = new Paciente("Carlos", "aadawdadadad");
-            var repositorioPaciente = new RepositorioPacienteEmBancoDeDados();
-
-            repositorioPaciente.Inserir(paciente);
-
-            var pacienteNumero = repositorioPaciente.SelecionarPacienteNumero(paciente.Id);
-
-            requisicao.Paciente = pacienteNumero;
-            requisicao.Medicamento = medicamentoNumero;
-            requisicao.Funcionario = funcionarioNumero;
-            requisicao.Data = DateTime.Today;
-            requisicao.QtdMedicamento = 2;
+            Requisicao requisicao=gerador.GerandoRequisicao();
 
             repositorioRequisicao.Excluir(requisicao);
 
-            var requisicaoExcluida =repositorioRequisicao.SelecionarRequisicaoNumero(requisicao.Id);
+            var requisicaoExcluida = repositorioRequisicao.SelecionarRequisicaoNumero(requisicao.Id);
 
             Assert.IsNull(requisicaoExcluida.Funcionario);
         }
 
         [TestMethod]
         public void Deve_Selecionar_Todos()
-        {
+        {           
+            Requisicao requisicao = gerador.GerandoRequisicao();
 
-            var requisicao = new Requisicao();
+            Requisicao requisicaoDois = gerador.GerandoRequisicao();
 
-            var requisicaoDois  = new Requisicao();
+            Requisicao requisicaoTres = gerador.GerandoRequisicao();
 
-            var requisicaoTres = new Requisicao();
+            var  requisicaoList = repositorioRequisicao.SelecionarTodos();
 
-            var repositorioRequisicao = new RepositorioRequisicaoEmBancoDeDados();
-
-            var medicamento = new Medicamento("Amonixilina", "Dor", "1313131", DateTime.Today);
-            var repositorioMedicamento = new RepositorioMedicamentoEmBancoDados();
-
-
-            Fornecedor fornecedor = new Fornecedor("AAA", "2424242", "AAA@GMAIL.COM", "LAGES", "SC");
-            var repositorioFornecedor = new RepositorioFornecedorEmBancoDeDados();
-            repositorioFornecedor.Inserir(fornecedor);
-
-            repositorioMedicamento.Inserir(medicamento, fornecedor);
-
-            var medicamentoNumero = repositorioMedicamento.SelecionarMedicamentoNumero(medicamento.Id);
-
-
-            var funcionario = new Funcionario();
-            funcionario.Nome = "Edenilson";
-            funcionario.Senha = "aaa1313";
-            funcionario.Login = "aaaaaaaaa";
-            var repositorioFuncionario = new RepositorioFuncionarioEmBancoDeDados();
-
-            repositorioFuncionario.Inserir(funcionario);
-
-            var funcionarioNumero = repositorioFuncionario.SelecionarFuncionarioPorNumero(funcionario.Id);
-
-            var paciente = new Paciente("Carlos", "aadawdadadad");
-            var repositorioPaciente = new RepositorioPacienteEmBancoDeDados();
-
-            repositorioPaciente.Inserir(paciente);
-
-            var pacienteNumero = repositorioPaciente.SelecionarPacienteNumero(paciente.Id);
-
-            requisicao.Paciente = pacienteNumero;
-            requisicao.Medicamento = medicamentoNumero;
-            requisicao.Funcionario = funcionarioNumero;
-            requisicao.Data = DateTime.Today;
-            requisicao.QtdMedicamento = 2;
-
-            requisicaoDois.Paciente = pacienteNumero;
-            requisicaoDois.Medicamento = medicamentoNumero;
-            requisicaoDois.Funcionario = funcionarioNumero;
-            requisicaoDois.Data = DateTime.Today;
-            requisicaoDois.QtdMedicamento = 20;
-
-            requisicaoTres.Paciente=pacienteNumero; 
-            requisicaoTres.Data = DateTime.Today;
-            requisicaoTres.Funcionario= funcionarioNumero;
-            requisicaoTres.QtdMedicamento = 30;
-            requisicaoTres.Medicamento= medicamentoNumero;
-
-            repositorioRequisicao.Inserir(requisicao);
-            repositorioRequisicao.Inserir(requisicaoDois);
-            repositorioRequisicao.Inserir(requisicaoTres);
-
-            var listaRequisicao = repositorioRequisicao.SelecionarTodos();
-
-            Assert.AreEqual(requisicao.QtdMedicamento, listaRequisicao[0].QtdMedicamento);
-            Assert.AreEqual(requisicaoDois.QtdMedicamento, listaRequisicao[1].QtdMedicamento);
-            Assert.AreEqual(requisicaoTres.QtdMedicamento, listaRequisicao[2].QtdMedicamento);
-           
-
-            
-            
-            
+            for (int i = 0; i < requisicaoList.Count; i++)
+            {
+                Assert.AreEqual(requisicao.QtdMedicamento, requisicaoList[i].QtdMedicamento);
+            }
         }
 
     }

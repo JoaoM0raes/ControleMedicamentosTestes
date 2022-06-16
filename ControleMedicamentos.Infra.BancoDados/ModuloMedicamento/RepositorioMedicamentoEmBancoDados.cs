@@ -89,10 +89,9 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
 														[ID]=@ID";
 		private string SelecionarRequisicao = @"Select 
                                                 QuantidadeMedicamento
-
-												From TBRequisicao
+												From TBRequisicao 
 												 WHERE 
-												  [Medicamento_Id]=@ID";
+												  Medicamento_Id=@ID";
 
 		public ValidationResult Inserir(Medicamento novoRegistro, Fornecedor fornecedor)
 		{

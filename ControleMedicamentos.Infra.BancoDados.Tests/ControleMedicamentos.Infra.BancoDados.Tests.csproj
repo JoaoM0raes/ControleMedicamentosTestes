@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ControleMedicamentos.Dominio\ControleMedicamentos.Dominio.csproj" />
     <ProjectReference Include="..\ControleMedicamentos.Infra.BancoDados\ControleMedicamentos.Infra.BancoDados.csproj" />
+    <ProjectReference Include="..\GeradorClasses\GeradorClasses.csproj" />
   </ItemGroup>
 
 </Project>

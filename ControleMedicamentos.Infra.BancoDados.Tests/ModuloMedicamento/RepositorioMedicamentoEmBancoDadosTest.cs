@@ -4,8 +4,10 @@ using ControleMedicamentos.Dominio.ModuloMedicamento;
 using ControleMedicamentos.Infra.BancoDados.ModuloFornecedor;
 using ControleMedicamentos.Infra.BancoDados.ModuloFuncionario;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ControleMedicamentos.Infra.BancoDados.ModuloRequisicao;
 using System;
 using System.Data.SqlClient;
+using ControleMedicamentos.Dominio.ModuloRequisicao;
 
 namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
 {
@@ -156,6 +158,39 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
             Assert.AreEqual("Painkiller", listaMedicamento[1].Nome);
             Assert.AreEqual("vasco", listaMedicamento[2].Nome);
 
+        }
+        [TestMethod]
+        public void Deve_Inserir_Requisicao_No_Medicamento()
+        {
+            var requisicao = new Requisicao();
+
+            requisicao.QtdMedicamento = 10;
+
+            Medicamento medicamento = new Medicamento("Amoxilina", "Para dor", "123133", DateTime.Today);
+            
+            Fornecedor fornecedor = new Fornecedor("AAA", "2424242", "AAA@GMAIL.COM", "LAGES", "SC");
+
+            var repositorio = new RepositorioMedicamentoEmBancoDados();
+
+            var repositorioFornecedor = new RepositorioFornecedorEmBancoDeDados();
+
+            var repositorioRequisicao = new RepositorioRequisicaoEmBancoDeDados(); 
+
+            repositorioFornecedor.Inserir(fornecedor);
+
+            var fornecedorComId = repositorioFornecedor.SelecionarFornecedorPorNumero(fornecedor.Id);
+
+            repositorio.Inserir(medicamento, fornecedorComId);
+
+            var medicamentoComId=repositorio.SelecionarMedicamentoNumero(medicamento.Id);
+
+            requisicao.Medicamento = medicamentoComId;
+
+            
+
+            var MedicamentoComRequisicao = repositorio.SelecionarMedicamentoNumero(medicamento.Id);
+
+            Assert.AreEqual(requisicao.Medicamento, MedicamentoComRequisicao.Requisicoes[0]);
 
 
         }

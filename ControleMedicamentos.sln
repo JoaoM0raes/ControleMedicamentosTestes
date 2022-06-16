@@ -23,6 +23,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControleMedicamentos.Infra.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControleMedicamentos.Infra.BancoDados", "ControleMedicamentos.Infra.BancoDados\ControleMedicamentos.Infra.BancoDados.csproj", "{27E25512-5C5F-42A0-AA99-D18DD2E181C0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GeradorDeClasses", "GeradorDeClasses", "{94F7A757-371F-4653-8CDB-A3E7EA9B8564}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeradorClasses", "GeradorClasses\GeradorClasses.csproj", "{FB8E2811-B276-4439-8CED-99C2328E10FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,10 @@ Global
 		{27E25512-5C5F-42A0-AA99-D18DD2E181C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27E25512-5C5F-42A0-AA99-D18DD2E181C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27E25512-5C5F-42A0-AA99-D18DD2E181C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB8E2811-B276-4439-8CED-99C2328E10FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB8E2811-B276-4439-8CED-99C2328E10FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB8E2811-B276-4439-8CED-99C2328E10FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB8E2811-B276-4439-8CED-99C2328E10FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +71,8 @@ Global
 		{B48987DE-1ADA-49B3-8C79-DA35EAC5CB89} = {758DFCFD-913E-4BFE-97A2-7861A23E3C5E}
 		{EE7ACE2D-CCC8-4921-A9E3-2A58865FFD15} = {B3B8B8C4-4077-4EE9-90F5-2C5674D8432E}
 		{27E25512-5C5F-42A0-AA99-D18DD2E181C0} = {758DFCFD-913E-4BFE-97A2-7861A23E3C5E}
+		{94F7A757-371F-4653-8CDB-A3E7EA9B8564} = {65427580-4628-4172-8EC1-0922514F3AAD}
+		{FB8E2811-B276-4439-8CED-99C2328E10FD} = {94F7A757-371F-4653-8CDB-A3E7EA9B8564}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C4AB0136-5F0E-46F1-8892-2BD6E76C1825}
