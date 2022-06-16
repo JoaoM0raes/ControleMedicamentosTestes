@@ -208,6 +208,29 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloRequisicao
 
 			return requisicao;
 		}
+		public List<Requisicao> SelecionarTodos()
+        {
+			SqlConnection conexaoComBanco = new SqlConnection(EndereçoBanco);
+
+			SqlCommand comandoInsercao = new SqlCommand(SelecionarTodasRequisicao, conexaoComBanco);
+
+			List<Requisicao> requisicaos = new List<Requisicao>();
+
+			conexaoComBanco.Open();
+
+
+			SqlDataReader leitor = comandoInsercao.ExecuteReader();
+
+			while (leitor.Read())
+			{
+				Requisicao requisicao = ConverterRequisicao(leitor);
+				requisicaos.Add(requisicao);
+				
+			}
+
+			conexaoComBanco.Close();
+			return requisicaos;
+		}
 
         private Requisicao ConverterRequisicao(SqlDataReader leitor)
         {
