@@ -35,8 +35,6 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloRequisicao
                                DELETE FROM [TBPaciente]
                                     DBCC CHECKIDENT (TBPaciente, RESEED, 0)
 
-                               
-
                                 DELETE FROM [TBFornecedor]
                                      DBCC CHECKIDENT (TBFornecedor, RESEED, 0)
 ";

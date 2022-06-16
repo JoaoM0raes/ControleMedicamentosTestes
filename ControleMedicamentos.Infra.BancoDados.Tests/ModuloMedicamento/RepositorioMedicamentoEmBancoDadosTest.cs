@@ -13,11 +13,20 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
     public class RepositorioMedicamentoEmBancoDadosTest
     {
 
-        private string sql = @"DELETE FROM [TBMedicamento]
-                                 DBCC CHECKIDENT (TBMedicamento, RESEED, 0)
+        private string sql = @"DELETE FROM [TBRequisicao]
+                                     DBCC CHECKIDENT (TBRequisicao, RESEED, 0)
 
-                               DELETE FROM [TBFornecedor]
-                                    DBCC CHECKIDENT (TBFornecedor, RESEED, 0)
+                                DELETE FROM [TBMedicamento]
+                                    DBCC CHECKIDENT (TBMedicamento, RESEED, 0)
+
+                               DELETE FROM [TBFuncionario]
+                                    DBCC CHECKIDENT (TBFuncionario, RESEED, 0)
+
+                               DELETE FROM [TBPaciente]
+                                    DBCC CHECKIDENT (TBPaciente, RESEED, 0)
+
+                                DELETE FROM [TBFornecedor]
+                                     DBCC CHECKIDENT (TBFornecedor, RESEED, 0)
 ";
         
 
