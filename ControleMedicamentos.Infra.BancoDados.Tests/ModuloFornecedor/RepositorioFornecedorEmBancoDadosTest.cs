@@ -1,5 +1,6 @@
 using ControleMedicamentos.Dominio.ModuloFornecedor;
 using ControleMedicamentos.Infra.BancoDados.ModuloFornecedor;
+using GeradorClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data.SqlClient;
 
@@ -8,6 +9,10 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloFornecedor
     [TestClass]
     public class RepositorioFornecedorEmBancoDadosTest
     {
+
+        RepositorioFornecedorEmBancoDeDados repositorio = new RepositorioFornecedorEmBancoDeDados();
+
+        GeradorDeClasses gerador= new GeradorDeClasses();
         private string sql = @"DELETE FROM [TBRequisicao]
                                      DBCC CHECKIDENT (TBRequisicao, RESEED, 0)
 
@@ -40,75 +45,51 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloFornecedor
         [TestMethod]
         public void Deve_inserir_Fornecedor()
         {
-            var repositorio = new RepositorioFornecedorEmBancoDeDados();
-            var novoFornecedor = new Fornecedor("aaaa","bbbb","ccccc","ddddd","eeeeeee");
-            repositorio.Inserir(novoFornecedor);
+            Fornecedor fornecedor = gerador.GerandoFornecedor();
 
-            var Fornecedor= repositorio.SelecionarFornecedorPorNumero(novoFornecedor.Id);
-            
-            Assert.AreEqual(novoFornecedor.Id, Fornecedor.Id);
-            Assert.AreEqual(novoFornecedor.Nome, Fornecedor.Nome);
-            Assert.AreEqual(novoFornecedor.Email, Fornecedor.Email);
-            Assert.AreEqual(novoFornecedor.Telefone,Fornecedor.Telefone);
-            Assert.AreEqual(novoFornecedor.Cidade, Fornecedor.Cidade);
+            Assert.IsNotNull(fornecedor);
         }
         [TestMethod]
         public void Deve_Editar_Fornecedor()
         {
-           var repositorio= new  RepositorioFornecedorEmBancoDeDados();
+           Fornecedor fornecedor= gerador.GerandoFornecedor();
 
-           var novoFornecedor = new Fornecedor("Wanderson", "DePena", "Bustos", "Taison", "Alemao");
+           fornecedor.Nome = "ardafadadadadada";
 
-           repositorio.Inserir(novoFornecedor);
+           repositorio.Editar(fornecedor);
 
-           Fornecedor fornecedor = repositorio.SelecionarFornecedorPorNumero(novoFornecedor.Id);
-
-            fornecedor.Nome = "Inter";
-            fornecedor.Email = "3x1";
-            fornecedor.Telefone = "1909";
-            fornecedor.Cidade = "Porto Alegre";
-            fornecedor.Estado = "Rio grande do sul";
-
-            repositorio.Editar(fornecedor);
-
-            Fornecedor fornecedorEditado = repositorio.SelecionarFornecedorPorNumero(fornecedor.Id);
+           var fornecedorEditado = repositorio.SelecionarFornecedorPorNumero(fornecedor.Id);
 
             Assert.AreEqual(fornecedor.Nome,fornecedorEditado.Nome);
-            Assert.AreEqual(fornecedor.Email, fornecedorEditado.Email);
-            Assert.AreEqual(fornecedor.Telefone, fornecedorEditado.Telefone);
-            Assert.AreEqual(fornecedor.Cidade, fornecedorEditado.Cidade);
-            Assert.AreEqual(fornecedor.Estado, fornecedorEditado.Estado);
+
+
         }
         [TestMethod]
         public void Deve_Excluir_Fornecedor()
         {
-            var repositorio = new RepositorioFornecedorEmBancoDeDados();
+            Fornecedor fornecedor = gerador.GerandoFornecedor();
 
-            var novoFornecedor = new Fornecedor("Wanderson", "DePena", "Bustos", "Taison", "Alemao");
+            repositorio.Excluir(fornecedor);
 
-            repositorio.Excluir(novoFornecedor);
+            var fornecedorExcluido = repositorio.SelecionarFornecedorPorNumero(fornecedor.Id);
 
-            var funcionarioExcluido = repositorio.SelecionarFornecedorPorNumero(novoFornecedor.Id);
-
-            Assert.IsNull(funcionarioExcluido);
-        } 
+            Assert.IsNull(fornecedorExcluido);  
+        }
+        [TestMethod]
         public void Deve_Selecionar_Todos()
         {
-            var repositorio = new RepositorioFornecedorEmBancoDeDados();
+            Fornecedor fornecedorUm = gerador.GerandoFornecedor();
 
-            var fornecedorUm = new Fornecedor("Wanderson", "DePena", "Bustos", "Taison", "Alemao");
-            var fornecedorDois = new Fornecedor("Alemao", "Wanderson", "DePena", "Bustos", "Taison");
-            var fornecedorTres = new Fornecedor("Jhonny", "Wanderson", "DePena", "Bustos", "Taison");
+            Fornecedor fornecedorDois = gerador.GerandoFornecedor();
 
-            repositorio.Inserir(fornecedorUm);
-            repositorio.Inserir(fornecedorDois);
-            repositorio.Inserir(fornecedorTres);
+            Fornecedor fornecedorTres = gerador.GerandoFornecedor();
 
-            var listaFornecedores = repositorio.SelecionarTodos();
+            var listaFornecedor = repositorio.SelecionarTodos();
 
-            Assert.AreEqual(fornecedorUm.Nome, listaFornecedores[0].Nome);
-            Assert.AreEqual(fornecedorDois.Nome, listaFornecedores[1].Nome);
-            Assert.AreEqual(fornecedorTres.Nome, listaFornecedores[2].Nome);
+            for(int i = 0; i < listaFornecedor.Count; i++)
+            {
+                Assert.AreEqual(fornecedorUm.Nome, listaFornecedor[i].Nome);
+            }  
         }
     }
 }
