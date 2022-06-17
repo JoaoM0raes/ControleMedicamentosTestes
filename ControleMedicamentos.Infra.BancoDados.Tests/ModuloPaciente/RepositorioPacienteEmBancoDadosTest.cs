@@ -3,12 +3,15 @@ using ControleMedicamentos.Infra.BancoDados.ModuloPaciente;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data.SqlClient;
 using System.Collections.Generic;
+using GeradorClasses;
 
 namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloPaciente
 {
     [TestClass]
     public class RepositorioPacienteEmBancoDadosTest
     {
+        RepositorioPacienteEmBancoDeDados repositorioPaciente = new RepositorioPacienteEmBancoDeDados();
+        GeradorDeClasses gerador = new GeradorDeClasses();
         private string sql = @"DELETE FROM [TBRequisicao]
                                      DBCC CHECKIDENT (TBRequisicao, RESEED, 0)
 
@@ -40,76 +43,55 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloPaciente
        [TestMethod]
         public void Deve_inserir_Paciente()
         {
-            var Repositorio = new RepositorioPacienteEmBancoDeDados();
+            Paciente paciente= gerador.GerandoPaciente();
 
-            Paciente novoPaciente = new Paciente("Carlos", "1233344");
-
-            Repositorio.Inserir(novoPaciente);
-
-          var PacientePorNumero=  Repositorio.SelecionarPacienteNumero(novoPaciente.Id);
-
-            Assert.IsNotNull(PacientePorNumero);
-            Assert.AreEqual(novoPaciente.Id, PacientePorNumero.Id);
-            Assert.AreEqual(novoPaciente.Nome, PacientePorNumero.Nome);
-            Assert.AreEqual(novoPaciente.CartaoSUS, PacientePorNumero.CartaoSUS);
+            Assert.IsNotNull(paciente);
         }
         [TestMethod]
         public void Deve_Editar_Paciente()
         {
-            var Repositorio = new RepositorioPacienteEmBancoDeDados();
+            Paciente paciente = gerador.GerandoPaciente();
 
-            Paciente novoPaciente = new Paciente("Carlos", "1233344");
+            var pacienteNovo = repositorioPaciente.SelecionarPacienteNumero(paciente.Id);
 
-            Repositorio.Inserir(novoPaciente);
+            pacienteNovo.Nome = "Carlos";
+            pacienteNovo.CartaoSUS = "2424242";
 
-            var pacienteNovo = Repositorio.SelecionarPacienteNumero(novoPaciente.Id);
+            repositorioPaciente.Editar(pacienteNovo);
 
-            pacienteNovo.Nome = "jOÃO";
-            pacienteNovo.CartaoSUS = "223424242";
+            var pacienteEditado = repositorioPaciente.SelecionarPacienteNumero(pacienteNovo.Id);
 
-            Repositorio.Editar(pacienteNovo);
+            Assert.AreEqual(pacienteEditado.Nome, pacienteNovo.Nome);   
+            Assert.AreEqual(pacienteEditado.CartaoSUS,pacienteNovo.CartaoSUS);
 
-            var paciente = Repositorio.SelecionarPacienteNumero(pacienteNovo.Id);
-
-            Assert.IsNotNull(paciente);
-            Assert.AreEqual(paciente.Nome, pacienteNovo.Nome);
-            Assert.AreEqual(paciente.CartaoSUS, pacienteNovo.CartaoSUS);
 
         }
         [TestMethod]
         public void Deve_Excluir_Paciente()
         {
-            Paciente novoPaciente = new Paciente("Wandergol","242424242");
+            Paciente pacienteNovo = gerador.GerandoPaciente();
 
+            repositorioPaciente.Excluir(pacienteNovo);
 
-            var repositorio = new RepositorioPacienteEmBancoDeDados();
+            var pacienteExcluido = repositorioPaciente.SelecionarPacienteNumero(pacienteNovo.Id);
 
-            repositorio.Excluir(novoPaciente);
-
-            var PacienteExcluido = repositorio.SelecionarPacienteNumero(novoPaciente.Id);
-
-            Assert.IsNull(PacienteExcluido);
+            Assert.IsNull(pacienteExcluido);
         }
         [TestMethod]
         public void Deve_Selecionar_Todos()
         {
-            Paciente novoPacienteUm = new Paciente("Carlos De Pena", "2431313131");
-            Paciente novoPacienteDois = new Paciente("Alan Patrick", "2434441313131");
-            Paciente novoPacienteTres = new Paciente("Pedro Henrique","76767676776");
+            Paciente Paciente = gerador.GerandoPaciente();
 
-            var repositorio = new RepositorioPacienteEmBancoDeDados();
+            Paciente PacienteDois = gerador.GerandoPaciente();
 
-            repositorio.Inserir(novoPacienteUm);
-            repositorio.Inserir(novoPacienteDois);
-            repositorio.Inserir(novoPacienteTres);
+            Paciente PacienteTres = gerador.GerandoPaciente();
 
-            List<Paciente> lista = repositorio.SelecionarTodos();
+            var PacienteList = repositorioPaciente.SelecionarTodos();
 
-            Assert.AreEqual(3,lista.Count);
-
-            Assert.AreEqual("Carlos De Pena", lista[0].Nome);
-            Assert.AreEqual("Alan Patrick", lista[1].Nome);
-            Assert.AreEqual("Pedro Henrique", lista[2].Nome);
+            for (int i = 0; i < PacienteList.Count; i++)
+            {
+                Assert.AreEqual(Paciente.Nome, PacienteList[i].Nome);
+            }
         }
 
 

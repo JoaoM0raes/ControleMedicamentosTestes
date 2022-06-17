@@ -8,12 +8,16 @@ using ControleMedicamentos.Infra.BancoDados.ModuloRequisicao;
 using System;
 using System.Data.SqlClient;
 using ControleMedicamentos.Dominio.ModuloRequisicao;
+using GeradorClasses;
 
 namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
 {
     [TestClass]
     public class RepositorioMedicamentoEmBancoDadosTest
     {
+        RepositorioMedicamentoEmBancoDados repositorio= new RepositorioMedicamentoEmBancoDados();
+
+        GeradorDeClasses gerador= new GeradorDeClasses();
 
         private string sql = @"DELETE FROM [TBRequisicao]
                                      DBCC CHECKIDENT (TBRequisicao, RESEED, 0)
@@ -49,150 +53,56 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
         [TestMethod]
         public void Deve_inserir_medicamento_Com_Fornecedor()
         {
-            Medicamento medicamento = new Medicamento("Amoxilina","Para dor","123133",DateTime.Today);
+            Medicamento medicamento = gerador.GerandoMedicamento();
 
-            Fornecedor fornecedor = new Fornecedor("AAA","2424242","AAA@GMAIL.COM","LAGES","SC");
-
-            var repositorio = new RepositorioMedicamentoEmBancoDados();
-
-            var repositorioFornecedor = new RepositorioFornecedorEmBancoDeDados();
-
-            repositorioFornecedor.Inserir(fornecedor);
-
-            var fornecedorComId = repositorioFornecedor.SelecionarFornecedorPorNumero(fornecedor.Id);
-
-            repositorio.Inserir(medicamento,fornecedorComId);
-
-            var medicamentoNovo=repositorio.SelecionarMedicamentoNumero(medicamento.Id);
-
-            Assert.AreEqual(medicamento.Id, medicamentoNovo.Id);
-            Assert.AreEqual(medicamento.Descricao, medicamentoNovo.Descricao);
-            Assert.AreEqual(medicamento.Validade, medicamentoNovo.Validade);
-            Assert.AreEqual(fornecedor.Nome, medicamentoNovo.Fornecedor.Nome);
+            Assert.IsNotNull(medicamento);   
         }
         [TestMethod]
         public void Deve_Editar_Medicamento()
         {
-            Medicamento medicamento = new Medicamento("Amoxilina", "Para dor", "123133", DateTime.Today);
+            Medicamento medicamento = gerador.GerandoMedicamento();
 
-            Fornecedor fornecedor = new Fornecedor("AAA", "2424242", "AAA@GMAIL.COM", "LAGES", "SC");
+            medicamento.Nome = "bbbbbbbbbbb";
 
-            var repositorio = new RepositorioMedicamentoEmBancoDados();
+            repositorio.Editar(medicamento,medicamento.Fornecedor);
 
-            var repositorioFornecedor = new RepositorioFornecedorEmBancoDeDados();
+            var medicamentoEditado = repositorio.SelecionarMedicamentoNumero(medicamento.Id);
 
-            repositorioFornecedor.Inserir(fornecedor);
-
-            var fornecedorComId = repositorioFornecedor.SelecionarFornecedorPorNumero(fornecedor.Id);
-
-            repositorio.Inserir(medicamento, fornecedorComId);
-
-            var medicamentoNovo = repositorio.SelecionarMedicamentoNumero(medicamento.Id);
-
-            medicamentoNovo.Nome = "PAO";
-            medicamentoNovo.Descricao="Frances";
-
-            repositorio.Editar(medicamentoNovo,fornecedor);
-
-            var medicamentoEditado = repositorio.SelecionarMedicamentoNumero(medicamentoNovo.Id);
-
-             Assert.AreEqual(medicamentoNovo.Nome, medicamentoEditado.Nome);
-            Assert.AreEqual(medicamentoNovo.Descricao, medicamentoEditado.Descricao);
+            Assert.AreEqual(medicamento.Nome,medicamentoEditado.Nome);
 
 
         }
         [TestMethod]
         public void Deve_Excluir_Medicamento()
         {
-            Medicamento medicamento = new Medicamento("Amoxilina", "Para dor", "123133", DateTime.Today);
+           Medicamento medicamento =gerador.GerandoMedicamento();
 
-            Fornecedor fornecedor = new Fornecedor("AAA", "2424242", "AAA@GMAIL.COM", "LAGES", "SC");
+           repositorio.Excluir(medicamento);
 
-            var repositorio = new RepositorioMedicamentoEmBancoDados();
+            var MedicamentoExcluido = repositorio.SelecionarMedicamentoNumero(medicamento.Id);
 
-            var repositorioFornecedor = new RepositorioFornecedorEmBancoDeDados();
-
-            repositorioFornecedor.Inserir(fornecedor);
-
-            var fornecedorComId = repositorioFornecedor.SelecionarFornecedorPorNumero(fornecedor.Id);
-
-            repositorio.Inserir(medicamento, fornecedorComId);
-
-            var medicamentoNovo = repositorio.SelecionarMedicamentoNumero(medicamento.Id);
-
-            repositorio.Excluir(medicamentoNovo);
-
-            var medicamentoExcluido = repositorio.SelecionarMedicamentoNumero(medicamentoNovo.Id);
-
-            Assert.IsNull(medicamentoExcluido);
+            Assert.IsNull(MedicamentoExcluido);
+         
 
         }
         [TestMethod]
         public void Deve_Selecionar_Todos()
         {
-            Medicamento medicamento = new Medicamento("Amoxilina", "Para dor", "123133", DateTime.Today);
+            Medicamento Medicamento = gerador.GerandoMedicamento();
 
-            Medicamento medicamentoDois = new Medicamento("Painkiller", "Para dor", "123133", DateTime.Today);
+            Medicamento MedicamentoDois = gerador.GerandoMedicamento();
 
-            Medicamento medicamentoTres = new Medicamento("vasco", "Para dor", "123133", DateTime.Today);
+            Medicamento MedicamentoTres = gerador.GerandoMedicamento();
 
-            Fornecedor fornecedor = new Fornecedor("AAA", "2424242", "AAA@GMAIL.COM", "LAGES", "SC");
+            var MedicamentoList = repositorio.SelecionarTodos();
 
-            var repositorio = new RepositorioMedicamentoEmBancoDados();
-
-            var repositorioFornecedor = new RepositorioFornecedorEmBancoDeDados();
-
-            repositorioFornecedor.Inserir(fornecedor);
-
-            var fornecedorComId = repositorioFornecedor.SelecionarFornecedorPorNumero(fornecedor.Id);
-
-            repositorio.Inserir(medicamento, fornecedorComId);
-
-            repositorio.Inserir(medicamentoDois, fornecedorComId);
-
-            repositorio.Inserir(medicamentoTres, fornecedorComId);
-
-            var listaMedicamento = repositorio.SelecionarTodos();
-
-            Assert.AreEqual("Amoxilina", listaMedicamento[0].Nome);
-            Assert.AreEqual("Painkiller", listaMedicamento[1].Nome);
-            Assert.AreEqual("vasco", listaMedicamento[2].Nome);
+            for (int i = 0; i < MedicamentoList.Count; i++)
+            {
+                Assert.AreEqual(Medicamento.Nome, MedicamentoList[i].Nome);
+            }
 
         }
-        [TestMethod]
-        public void Deve_Inserir_Requisicao_No_Medicamento()
-        {
-            var requisicao = new Requisicao();
-
-            requisicao.QtdMedicamento = 10;
-
-            Medicamento medicamento = new Medicamento("Amoxilina", "Para dor", "123133", DateTime.Today);
-            
-            Fornecedor fornecedor = new Fornecedor("AAA", "2424242", "AAA@GMAIL.COM", "LAGES", "SC");
-
-            var repositorio = new RepositorioMedicamentoEmBancoDados();
-
-            var repositorioFornecedor = new RepositorioFornecedorEmBancoDeDados();
-
-            var repositorioRequisicao = new RepositorioRequisicaoEmBancoDeDados(); 
-
-            repositorioFornecedor.Inserir(fornecedor);
-
-            var fornecedorComId = repositorioFornecedor.SelecionarFornecedorPorNumero(fornecedor.Id);
-
-            repositorio.Inserir(medicamento, fornecedorComId);
-
-            var medicamentoComId=repositorio.SelecionarMedicamentoNumero(medicamento.Id);
-
-            requisicao.Medicamento = medicamentoComId;
-
-            
-
-            var MedicamentoComRequisicao = repositorio.SelecionarMedicamentoNumero(medicamento.Id);
-
-            Assert.AreEqual(requisicao.Medicamento, MedicamentoComRequisicao.Requisicoes[0]);
-
-
-        }
+        
+        
     }
 }

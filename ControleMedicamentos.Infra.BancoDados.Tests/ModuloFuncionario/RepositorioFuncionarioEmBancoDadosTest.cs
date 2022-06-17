@@ -1,5 +1,6 @@
 using ControleMedicamentos.Dominio.ModuloFuncionario;
 using ControleMedicamentos.Infra.BancoDados.ModuloFuncionario;
+using GeradorClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -9,6 +10,10 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloFuncionario
     [TestClass]
     public class RepositorioFuncionarioEmBancoDadosTest
     {
+        RepositorioFuncionarioEmBancoDeDados repositorio = new RepositorioFuncionarioEmBancoDeDados();
+
+        GeradorDeClasses gerador = new GeradorDeClasses();
+
         private string sql = @"DELETE FROM [TBRequisicao]
                                      DBCC CHECKIDENT (TBRequisicao, RESEED, 0)
 
@@ -41,103 +46,49 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloFuncionario
 
         public void Deve_inserir_Funcionario()
         {
-            Funcionario novoFuncionario = new Funcionario();
-            novoFuncionario.Login = "aaa";
-            novoFuncionario.Senha = "BBB";
-            novoFuncionario.Nome = "DDDD";
-
-
-            var repositorio = new RepositorioFuncionarioEmBancoDeDados();
-
-            //action
-            repositorio.Inserir(novoFuncionario);
-
-            //assert
-            Funcionario FuncionarioPorNumero = repositorio.SelecionarFuncionarioPorNumero(novoFuncionario.Id);
-
-            Assert.IsNotNull(FuncionarioPorNumero);
-            Assert.AreEqual(novoFuncionario.Id, FuncionarioPorNumero.Id);
-            Assert.AreEqual(novoFuncionario.Nome, FuncionarioPorNumero.Nome);
-            Assert.AreEqual(novoFuncionario.Login, FuncionarioPorNumero.Login);
-            Assert.AreEqual(novoFuncionario.Senha, FuncionarioPorNumero.Senha);
+            Funcionario funcionario = gerador.GerarandoFuncionario();
+            Assert.IsNotNull(funcionario);
    
         }
         [TestMethod]
         public void Deve_Editar_Funcionario()
         {
-            Funcionario novoFuncionario = new Funcionario();
-            novoFuncionario.Login = "aaa";
-            novoFuncionario.Senha = "BBB";
-            novoFuncionario.Nome = "DDDD";
+            Funcionario funcionario=gerador.GerarandoFuncionario();
 
-            var repositorio = new RepositorioFuncionarioEmBancoDeDados();
-        
-            repositorio.Inserir(novoFuncionario);
+            funcionario.Nome = "aaaaaaaaa";
 
-            Funcionario FuncionarioPorNumero = repositorio.SelecionarFuncionarioPorNumero(novoFuncionario.Id);
+            repositorio.Editar(funcionario);
 
-            FuncionarioPorNumero.Senha = "aaaaaa";
-            FuncionarioPorNumero.Login = "ddddd";
-            FuncionarioPorNumero.Nome = "DDDD";
+            var funcionarioEditado = repositorio.SelecionarFuncionarioPorNumero(funcionario.Id);
 
-            repositorio.Editar(FuncionarioPorNumero);
-
-            Funcionario funcionarioEditado = repositorio.SelecionarFuncionarioPorNumero(novoFuncionario.Id);
-
-            Assert.IsNotNull(FuncionarioPorNumero);
-            Assert.AreEqual(FuncionarioPorNumero.Id, funcionarioEditado.Id);
-            Assert.AreEqual(FuncionarioPorNumero.Nome, funcionarioEditado.Nome);
-            Assert.AreEqual(FuncionarioPorNumero.Login, funcionarioEditado.Login);
-            Assert.AreEqual(FuncionarioPorNumero.Senha, funcionarioEditado.Senha);
+            Assert.AreEqual(funcionario.Nome, funcionarioEditado.Nome);
         }
         [TestMethod]
         public void Deve_Excluir_Funcionario()
         {
-            Funcionario novoFuncionario = new Funcionario();
-            novoFuncionario.Login = "aaa";
-            novoFuncionario.Senha = "BBB";
-            novoFuncionario.Nome = "DDDD";
+            Funcionario funcionario = gerador.GerarandoFuncionario();
+
+            repositorio.Excluir(funcionario);
+
+            var funcionarioExcluido = repositorio.SelecionarFuncionarioPorNumero(funcionario.Id);
+
+            Assert.IsNull(funcionarioExcluido);
 
 
-            var repositorio = new RepositorioFuncionarioEmBancoDeDados();
-
-            repositorio.Excluir(novoFuncionario);
-
-            var FuncionarioExcluido = repositorio.SelecionarFuncionarioPorNumero(novoFuncionario.Id);
-
-            Assert.IsNull(FuncionarioExcluido);
         }
         [TestMethod]
         public void Deve_Verificar_Todos_Funcionario()
         {
-            Funcionario novoFuncionario = new Funcionario();
-            novoFuncionario.Login = "aaa";
-            novoFuncionario.Senha = "BBB";
-            novoFuncionario.Nome = "DDDD";
+            Funcionario funcionarioUm = gerador.GerarandoFuncionario();
+            Funcionario funcionarioDois = gerador.GerarandoFuncionario();
+            Funcionario funcionarioTres = gerador.GerarandoFuncionario();
 
-            Funcionario novoFuncionarioDois = new Funcionario();
-            novoFuncionarioDois.Login = "aaa";
-            novoFuncionarioDois.Senha = "BBB";
-            novoFuncionarioDois.Nome = "VVVV";
+            var listaFuncionario = repositorio.SelecionarTodos();
 
-            Funcionario novoFuncionarioTres = new Funcionario();
-            novoFuncionarioTres.Login = "aaa";
-            novoFuncionarioTres.Senha = "BBB";
-            novoFuncionarioTres.Nome = "AAAA";
-
-            var repositorio = new RepositorioFuncionarioEmBancoDeDados();
-
-            repositorio.Inserir(novoFuncionario);
-            repositorio.Inserir(novoFuncionarioDois);
-            repositorio.Inserir(novoFuncionarioTres);
-
-            List<Funcionario> funcionarios = repositorio.SelecionarTodos();
-
-            Assert.AreEqual(3, funcionarios.Count);
-
-            Assert.AreEqual("DDDD", funcionarios[0].Nome);
-            Assert.AreEqual("VVVV", funcionarios[1].Nome);
-            Assert.AreEqual("AAAA", funcionarios[2].Nome);
+            for (int i = 0; i < listaFuncionario.Count; i++)
+            {
+                Assert.AreEqual(funcionarioUm.Nome,listaFuncionario[i].Nome);
+            }
         }
     }
 }
